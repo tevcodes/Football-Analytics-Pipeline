@@ -3,15 +3,16 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import mongoose from 'mongoose';
-import matchRoutes from './routes/matchRoutes.js';
 import cors from 'cors';
+import AppError from './utils/appError.js';
+import globalErrorHandler from './middleware/errorMiddleware.js';
+import matchRoutes from './routes/matchRoutes.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '../.env')});
-
-console.log("Database URI check:", process.env.MONGODB_URI ? "Connected!" : "Missing!");
 
 const app = express();
 
@@ -19,6 +20,12 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/matches', matchRoutes);
+
+app.all(/(.*)/, (req, res, next) => {
+    next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
 
 mongoose.connect(process.env.MONGODB_URI)
 .then(() => console.log('connected to MongoDB Atlas'))
