@@ -1,0 +1,10 @@
+{
+  "name": "scoutech-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "ingestor.js",
+  "dependencies": {
+  "dotenv": "^17.3.1",
+  "mongoose": "^9.3.2"
+  }
+}

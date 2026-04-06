@@ -19,22 +19,29 @@ Centralized Error Handling: I’ve implemented a global error-handling middlewar
 
 Standardized Responses: Every API response follows a strict JSON envelope (status, results, data) so the frontend always knows what to expect.
 
-🤖 The "Robot" (Workers)
-Inside the /workers folder is ingestor.js. This is a standalone script that simulates a live data feed.
+The "Robot" (Data Ingestion Engine)
+To simulate a high-traffic sports environment, I built a standalone Node.js worker (ingestor.js) that acts as a mock data provider.
 
-Real-time Simulation: It pushes new match data to MongoDB Atlas every 10 seconds.
+Automated Ingestion: Streams randomized PSL match data into MongoDB every 10 seconds to mimic a live API integration.
 
-Stress Testing: I use this to test how the database handles frequent updates and how the "Value Pick" logic flags high xG (over 2.0) in real-time.
+Real-time Analytics: Validates the "Value Pick" logic by flagging high xG differentials (e.g., xG > 2.0) as data flows through the pipeline.
 
-How to run it
-Clone the repo and run npm install.
+🛡️ Industry-Standard Security
+I’ve "hardened" the Express backend to ensure it's production-ready and protected against common web vulnerabilities:
 
-Setup Environment: Create a .env file in the root with your MONGODB_URI.
+DDoS & Rate Limiting: Implemented express-rate-limit to prevent API abuse and brute-force attacks.
 
-Open three terminals:
+NoSQL Injection Defense: Integrated express-mongo-sanitize to strip malicious operators from user-supplied queries.
 
-Terminal 1 (Frontend): npm run dev (Vite dev server)
+XSS Protection: Used xss-clean to sanitize user input and prevent Cross-Site Scripting.
 
-Terminal 2 (API): nodemon api/server.js (The Server)
+Secure HTTP Headers: Configured helmet to hide sensitive server info and add a layer of specialized security headers.
 
-Terminal 3 (Robot): node workers/ingestor.js (The Data Feed)
+🚀 How to Run (The "Unified" Workflow)
+Clone & Install: npm install in the root folder.
+
+Environment: Create a .env in the root with your MONGODB_URI.
+
+Launch: Run npm run dev.
+
+Note: This uses concurrently to launch the API, the Robot, and the Frontend simultaneously.

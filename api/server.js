@@ -7,7 +7,10 @@ import cors from 'cors';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './middleware/errorMiddleware.js';
 import matchRoutes from './routes/matchRoutes.js';
-
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
+import rateLimit from 'express-rate-limit';
+import xss from 'xss-clean';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,8 +19,23 @@ dotenv.config({ path: path.resolve(__dirname, '../.env')});
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+app.use(helmet());
+
+app.use(cors({
+  origin: 'http://localhost:5173'
+}));
+
+const limiter = rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too many requests from this IP, please try again in an hour!'
+});
+app.use('/api', limiter);
+
+app.use(express.json({limit: '10kb'}));
+
+app.use(mongoSanitize());
+app.use(xss());
 
 app.use('/api/matches', matchRoutes);
 
