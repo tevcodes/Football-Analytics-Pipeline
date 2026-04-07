@@ -16,7 +16,6 @@ export const createMatch = catchAsync(async (req, res, next) => {
     if (!req.body.homeTeam || !req.body.awayTeam) {
         return next(new AppError('Match must have a home and away team.', 400));
     }
-
     const newMatch = await Match.create(req.body);
 
     res.status(201).json({
@@ -26,10 +25,7 @@ export const createMatch = catchAsync(async (req, res, next) => {
 });
 
 export const getPslValuePicks = catchAsync(async (req, res, next) => {
-    const valueMatches = await Match.find({
-        homeXG: { $gt: 2.0},
-        league: "DStv Premiership"
-    });
+    const valueMatches = await Match.findValuePicks();
 
     if (!valueMatches || valueMatches.length === 0) {
         return next(new AppError('No high-value PSL picks found today.', 404));

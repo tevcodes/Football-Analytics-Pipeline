@@ -3,12 +3,13 @@
   "private": true,
   "scripts": {
     "dev:api": "cd api && npm run dev",
-    "dev:robot": "cd workers && node ingestor.js",
-    "dev:web": "cd web && npm run dev",
+    "dev:robot": "wait-on http://localhost:3000 && cd workers && node ingestor.js",
+    "dev:web": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:robot\" \"npm run dev:web\"",
     "test:api": "cd api && npm test"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "wait-on": "^9.0.4"
   }
 }

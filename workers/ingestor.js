@@ -11,11 +11,11 @@ async function scoutMatch() {
 
     const matchData = {
         matchId: `PSL-${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
-        league: "DStv Premiership",
+        league: "Dstv Premiership",
         homeTeam: home,
         awayTeam: away,
-        homeXG: (Math.random() * 3.5).toFixed(2), // Random xG up to 3.5
-        awayXG: (Math.random() * 2.0).toFixed(2),
+        homeXG: Number((Math.random() * 3.5).toFixed(2)), 
+        awayXG: Number((Math.random() * 2.0).toFixed(2)),
         status: "live"
     };
 

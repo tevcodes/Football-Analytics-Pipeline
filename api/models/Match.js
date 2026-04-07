@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import { LEAGUES, THRESHOLDS } from '../utils/constants.js'
+
 
 const matchSchema = new mongoose.Schema({
     matchId: { type: String, required: true, unique: true },
-    league: { type: String, default: 'DStv Premiership' }, 
+    league: { type: String, default: 'Dstv Premiership' }, 
     homeTeam: { type: String, required: true },
     awayTeam: { type: String, required: true },
     venue: { type: String }, 
@@ -10,5 +12,12 @@ const matchSchema = new mongoose.Schema({
     awayXG: { type: Number },
     status: { type: String, enum: ['scheduled', 'live', 'finished'], default: 'scheduled' }
 });
+
+matchSchema.statics.findValuePicks = function() {
+    return this.find({
+        homeXG: { $gt: THRESHOLDS.HIGH_VALUE_XG },
+        league: LEAGUES.PSL
+    });
+};
 
 export const Match = mongoose.model('Match', matchSchema);
