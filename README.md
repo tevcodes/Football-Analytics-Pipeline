@@ -1,47 +1,52 @@
 Scoutech: PSL xG Analytics Engine ⚽🇿🇦
-This is a professional-grade personal project I’m building to track Expected Goals (xG) in the South African PSL. It’s an end-to-end system designed to find "Value Picks"—matches where a team is performing better than the score suggests, but the odds haven't caught up yet.
+This is a professional-grade personal project designed to track Expected Goals (xG) in the South African PSL. It is an end-to-end system built to identify "Value Picks"—matches where team performance metrics suggest a scoring potential that the market hasn't yet fully recognized.
+
+🛠️ Tech Stack
+Frontend: Vue 3 (Composition API), Vite, Tailwind CSS v4, Axios
+
+Backend: Node.js (ESM), Express, Mongoose
+
+Database: MongoDB Atlas (with TTL automated data rotation)
+
+DevOps: Concurrently, Wait-on, Dotenv
 
 💻 The Frontend (Vue 3 + Tailwind v4)
-I wanted a high-end, "Executive Dashboard" feel, so I went with a dark-mode, high-contrast theme inspired by the Vite and Material UI 3 aesthetics.
+I designed a high-end "Executive Dashboard" using a dark-mode, high-contrast theme.
 
-Vue 3 (Composition API): Using modern reactive states for the dashboard.
+Vue 3 (Composition API): Leveraging modern reactive states and decoupled components for a clean, maintainable architecture.
 
-Tailwind v4: Implementing a custom "Glassmorphism" navbar and animated "Underline Reveal" navigation.
+Defensive Rendering: The UI is "hardened" against inconsistent API data. I implemented optional chaining and nullish coalescing to ensure the dashboard remains functional (defaulting to 0.00) even if specific metrics are missing from the data stream.
 
-Responsive Design: Fully mobile-responsive with a hidden-to-flex sidebar/navbar for desktop users.
+Tailwind v4: Using utility-first styling for a "Glassmorphism" effect and responsive grid layouts that adapt from mobile to desktop.
 
-🛡️ The Backend (API & Security)
-I’m focusing on industry-standard architecture to make this "Production-Ready."
+🛡️ The Backend (API & Architecture)
+Built with industry-standard patterns to ensure the system is "Production-Ready."
 
-Express.js (ESM): The whole backend uses ES Modules (import/export) for modern JS consistency.
+Centralized Error Handling: Implemented a global error-handling middleware with a custom AppError class, ensuring consistent API responses and a reliable "safety net" for the application.
 
-Centralized Error Handling: I’ve implemented a global error-handling middleware with a custom AppError class. No more scattered try/catch blocks—everything is streamlined through a single "Safety Net."
+Standardized Responses: Every endpoint follows a strict JSON envelope structure (status, results, data) for seamless frontend integration.
 
-Standardized Responses: Every API response follows a strict JSON envelope (status, results, data) so the frontend always knows what to expect.
+Data Lifecycle Management (TTL): To keep the system performant and cost-effective, I implemented MongoDB TTL (Time-To-Live) indexes. Match data is automatically purged after 24 hours, preventing database bloat.
 
-The "Robot" (Data Ingestion Engine)
-To simulate a high-traffic sports environment, I built a standalone Node.js worker (ingestor.js) that acts as a mock data provider.
+🤖 The "Robot" (Data Ingestion Engine)
+To simulate a live sports environment, I built a standalone Node.js worker (ingestor.js).
 
-Automated Ingestion: Streams randomized PSL match data into MongoDB every 10 seconds to mimic a live API integration.
+Automated Scouting: Streams randomized PSL match data into the pipeline to mimic a live third-party API provider.
 
-Real-time Analytics: Validates the "Value Pick" logic by flagging high xG differentials (e.g., xG > 2.0) as data flows through the pipeline.
+Threshold Logic: Validates "Value Pick" logic by flagging high xG differentials (e.g., homeXG > 2.0) in real-time.
 
-🛡️ Industry-Standard Security
-I’ve "hardened" the Express backend to ensure it's production-ready and protected against common web vulnerabilities:
+🔒 Security Hardening
+Rate Limiting: Prevents API abuse using express-rate-limit.
 
-DDoS & Rate Limiting: Implemented express-rate-limit to prevent API abuse and brute-force attacks.
+Injection Defense: Uses mongo-sanitize and xss-clean to protect against NoSQL injection and Cross-Site Scripting.
 
-NoSQL Injection Defense: Integrated express-mongo-sanitize to strip malicious operators from user-supplied queries.
+HTTP Headers: Secured with Helmet to hide sensitive server signatures and enforce secure browser policies.
 
-XSS Protection: Used xss-clean to sanitize user input and prevent Cross-Site Scripting.
-
-Secure HTTP Headers: Configured helmet to hide sensitive server info and add a layer of specialized security headers.
-
-🚀 How to Run (The "Unified" Workflow)
-Clone & Install: npm install in the root folder.
+🚀 How to Run
+Clone & Install: Run npm install in the root folder.
 
 Environment: Create a .env in the root with your MONGODB_URI.
 
 Launch: Run npm run dev.
 
-Note: This uses concurrently to launch the API, the Robot, and the Frontend simultaneously.
+Note: This utilizes concurrently to launch the API, the Ingestor (Robot), and the Vite Frontend simultaneously.

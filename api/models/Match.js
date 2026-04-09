@@ -14,7 +14,7 @@ const matchSchema = new mongoose.Schema({
     createdAt: {
     type: Date,
     default: Date.now,
-    expires: 86400 // Automatically deletes the document after 24 hours (86400 seconds)
+    expires: 86400 
   }
 });
 
