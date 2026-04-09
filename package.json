@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev:api": "cd api && npm run dev",
-    "dev:robot": "wait-on http://localhost:3000 && cd workers && node ingestor.js",
+    "dev:robot": "wait-on http://localhost:3000/api/matches && cd workers && node ingestor.js",
     "dev:web": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:robot\" \"npm run dev:web\"",
     "test:api": "cd api && npm test"

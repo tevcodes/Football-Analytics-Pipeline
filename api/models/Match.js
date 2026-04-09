@@ -10,7 +10,12 @@ const matchSchema = new mongoose.Schema({
     venue: { type: String }, 
     homeXG: { type: Number },
     awayXG: { type: Number },
-    status: { type: String, enum: ['scheduled', 'live', 'finished'], default: 'scheduled' }
+    status: { type: String, enum: ['scheduled', 'live', 'finished'], default: 'scheduled' },
+    createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 86400 // Automatically deletes the document after 24 hours (86400 seconds)
+  }
 });
 
 matchSchema.statics.findValuePicks = function() {
