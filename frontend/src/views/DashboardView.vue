@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import MatchTicket from '../components/MatchTicket.vue'
+import MatchTicket from '../components/matches/MatchTicket.vue'
 
 const matches = ref([])
 const loading = ref(true)
