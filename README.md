@@ -52,3 +52,6 @@ Environment: Create a .env in the root with your MONGODB_URI.
 Launch: Run npm run dev.
 
 Note: This utilizes concurrently to launch the API, the Ingestor (Robot), and the Vite Frontend simultaneously.
+
+Current Status: TypeScript Migration
+This project is currently undergoing a strategic migration from JavaScript to TypeScript to improve maintainability, reduce runtime errors, and provide a better developer experience.
