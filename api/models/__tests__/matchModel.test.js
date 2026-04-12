@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
-import AppError from '../utils/appError.js';
+import AppError from '../../utils/appError.js';
 
-jest.unstable_mockModule('../models/matchModel.js', () => ({
+jest.unstable_mockModule('../matchModel.js', () => ({
   Match: {
     find: jest.fn().mockReturnThis(),
     sort: jest.fn().mockResolvedValue([
@@ -12,8 +12,8 @@ jest.unstable_mockModule('../models/matchModel.js', () => ({
   }
 }));
 
-const { default: matchRoutes } = await import('../routes/matchRoutes.js');
-const { default: globalErrorHandler } = await import('../middleware/errorMiddleware.js');
+const { default: matchRoutes } = await import('../../routes/matchRoutes.js');
+const { default: globalErrorHandler } = await import('../../middleware/errorMiddleware.js');
 
 
 const app = express();
