@@ -3,7 +3,7 @@ import request from 'supertest';
 import express from 'express';
 import AppError from '../utils/appError.js';
 
-jest.unstable_mockModule('../models/Match.js', () => ({
+jest.unstable_mockModule('../models/matchModel.js', () => ({
   Match: {
     find: jest.fn().mockReturnThis(),
     sort: jest.fn().mockResolvedValue([

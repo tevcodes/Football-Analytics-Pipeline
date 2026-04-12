@@ -1,4 +1,4 @@
-import { Match } from '../models/Match.js';
+import { Match } from '../models/matchModel.js';
 import AppError from '../utils/appError.js';
 import catchAsync from '../utils/catchAsync.js';
 
