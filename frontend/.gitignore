@@ -17,3 +17,6 @@ dist-ssr
 .idea/
 .DS_Store
 *.swp
+
+# Local environment variables 
+.env

@@ -1,23 +1,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import { matchService } from '../services/matchService' 
 import MatchTicket from '../components/matches/MatchTicket.vue'
 
 const matches = ref([])
 const loading = ref(true)
 
-const getDataFromBackend = async () => {
+const loadMatches = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/matches')
-        matches.value = response.data.data || response.data
+        matches.value = await matchService.getMatches()
     } catch (error) {
-        console.error("Frontend couldn't reach the API:", error)
+        errorMessage.value = "We're having trouble reaching the scouts. Please try again later."
     } finally {
         loading.value = false
     }
 }
 
-onMounted(getDataFromBackend)
+onMounted(loadMatches)
 </script>
 <template>
     <main class="flex-grow container mx-auto px-6 py-10">
