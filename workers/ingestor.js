@@ -1,16 +1,21 @@
 import axios from 'axios';
+import 'dotenv/config';
 
-const pslTeams = [
-    'Mamelodi Sundowns', 'Orlando Pirates', 'Kaizer Chiefs', 
-    'Cape Town City', 'SuperSport United', 'Stellenbosch FC'
-];
+   const CONFIG = {
+    apiUrl: process.env.API_URL || 'http://localhost:3000/api/matches',
+    teams: [
+        'Mamelodi Sundowns', 'Orlando Pirates', 'Kaizer Chiefs', 
+        'Cape Town City', 'SuperSport United', 'Stellenbosch FC'
+    ],
+    interval: 1000
+    };
 
-async function scoutMatch() {
-    const home = pslTeams[Math.floor(Math.random() * pslTeams.length)];
-    const away = pslTeams.filter(t => t !== home)[0];
+    async function scoutMatch(teams, targetUrl) {
+    const home = teams[Math.floor(Math.random() * teams.length)];
+    const away = teams.filter(t => t !== home)[0];
 
     const matchData = {
-        matchId: `PSL-${Math.random().toString(36).substr(2, 5).toUpperCase()}`,
+        matchId: `PSL-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
         league: "Dstv Premiership",
         homeTeam: home,
         awayTeam: away,
@@ -20,16 +25,15 @@ async function scoutMatch() {
     };
 
     try {
-        const response = await axios.post('http://localhost:3000/api/matches', matchData);
-        console.log(`Scouted: ${home} vs ${away} | xG: ${matchData.homeXG}` );
-
-        if (matchData.homeXG > 2.0) {
-            console.log(`VALUE ALERT: High xG detected for ${home}`);
-        }
+      await axios.post(targetUrl, matchData);
+      console.log(`[INGESTOR] ${home} vs ${away} | xG: ${matchData.homeXG}`);
     } catch (error) {
-        console.error('Scout connection error:', error.message);
+        console.error('Scout connection error:', error.message)
     }
 }
 
 console.log("Scoutech Ingestor is online... Scanning for PSL value...");
-setInterval(scoutMatch, 1000);
+
+setInterval(() => {
+    scoutMatch(CONFIG.teams, CONFIG.apiUrl);
+}, CONFIG.interval);
