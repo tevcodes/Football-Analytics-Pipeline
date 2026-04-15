@@ -1,5 +1,6 @@
 import axios from 'axios';
 import 'dotenv/config';
+import crypto from 'crypto';
 
    const CONFIG = {
     apiUrl: process.env.API_URL || 'http://localhost:3000/api/matches',
@@ -7,33 +8,49 @@ import 'dotenv/config';
         'Mamelodi Sundowns', 'Orlando Pirates', 'Kaizer Chiefs', 
         'Cape Town City', 'SuperSport United', 'Stellenbosch FC'
     ],
-    interval: 1000
+    delay: 1000
     };
 
-    async function scoutMatch(teams, targetUrl) {
+    const startSmartIngestor = (teams, targetUrl) => {
+    let retryCount = 0;
+    const BASE_DELAY = 1000;
+    const MAX_DELAY = 30000;
+
+    const scoutMatch = async () => {
     const home = teams[Math.floor(Math.random() * teams.length)];
-    const away = teams.filter(t => t !== home)[0];
+    const availableAwayTeams = teams.filter(t => t !== home);
+    const away = availableAwayTeams[Math.floor(Math.random() * availableAwayTeams.length)]
 
     const matchData = {
-        matchId: `PSL-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+        matchId: `PSL-${crypto.randomUUID().split('-')[0].toUpperCase()}`,
         league: "Dstv Premiership",
         homeTeam: home,
         awayTeam: away,
         homeXG: Number((Math.random() * 3.5).toFixed(2)), 
         awayXG: Number((Math.random() * 2.0).toFixed(2)),
-        status: "live"
+        status: "live",
+        timestamp: new Date().toISOString()
+        };
+
+        try {
+        await axios.post(targetUrl, matchData) 
+        console.log(`[INGESTOR] Success! ID: ${matchData.matchId}`);
+
+        retryCount = 0;
+        setTimeout(scoutMatch, BASE_DELAY);
+        } catch (error) {
+         retryCount++;
+
+         const backoffDelay = Math.min(Math.pow(2, retryCount) * 1000, MAX_DELAY);
+
+         console.error(`[INGESTOR] Error. Retrying in ${backoffDelay / 1000}s...`);
+
+        setTimeout(scoutMatch, BASE_DELAY);
+        }
     };
 
-    try {
-      await axios.post(targetUrl, matchData);
-      console.log(`[INGESTOR] ${home} vs ${away} | xG: ${matchData.homeXG}`);
-    } catch (error) {
-        console.error('Scout connection error:', error.message)
-    }
-}
+    scoutMatch();
+};
 
 console.log("Scoutech Ingestor is online... Scanning for PSL value...");
-
-setInterval(() => {
-    scoutMatch(CONFIG.teams, CONFIG.apiUrl);
-}, CONFIG.interval);
+startSmartIngestor(CONFIG.teams, CONFIG.apiUrl);
