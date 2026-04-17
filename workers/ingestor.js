@@ -8,13 +8,12 @@ import crypto from 'crypto';
         'Mamelodi Sundowns', 'Orlando Pirates', 'Kaizer Chiefs', 
         'Cape Town City', 'SuperSport United', 'Stellenbosch FC'
     ],
-    delay: 1000
+    delay: Number(process.env.INGESTOR_DELAY) || 3000
     };
 
-    const startSmartIngestor = (teams, targetUrl) => {
+    const startSmartIngestor = (teams, targetUrl, baseDelay) => {
     let retryCount = 0;
-    const BASE_DELAY = 1000;
-    const MAX_DELAY = 30000;
+    const MAX_DELAY = 60000;
 
     const scoutMatch = async () => {
     const home = teams[Math.floor(Math.random() * teams.length)];
@@ -37,15 +36,16 @@ import crypto from 'crypto';
         console.log(`[INGESTOR] Success! ID: ${matchData.matchId}`);
 
         retryCount = 0;
-        setTimeout(scoutMatch, BASE_DELAY);
+        
+         const jitter = (Math.random() * 400) - 200;
+         setTimeout(scoutMatch, baseDelay + jitter);
+
         } catch (error) {
-         retryCount++;
+            retryCount++;
+            const backoffDelay = Math.min(Math.pow(2, retryCount) * 1000, MAX_DELAY);
+            console.error(`[INGESTOR] Error. Retrying in ${backoffDelay / 1000}s...`);
 
-         const backoffDelay = Math.min(Math.pow(2, retryCount) * 1000, MAX_DELAY);
-
-         console.error(`[INGESTOR] Error. Retrying in ${backoffDelay / 1000}s...`);
-
-        setTimeout(scoutMatch, BASE_DELAY);
+            setTimeout(scoutMatch, backoffDelay);
         }
     };
 
@@ -53,4 +53,4 @@ import crypto from 'crypto';
 };
 
 console.log("Scoutech Ingestor is online... Scanning for PSL value...");
-startSmartIngestor(CONFIG.teams, CONFIG.apiUrl);
+startSmartIngestor(CONFIG.teams, CONFIG.apiUrl, CONFIG.delay);
